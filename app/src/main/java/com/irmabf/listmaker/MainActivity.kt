@@ -10,7 +10,7 @@ import android.view.MenuItem
 
 import kotlinx.android.synthetic.main.activity_list.*
 
-class ListActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     lateinit var  listsRecyclerView: RecyclerView
 
@@ -23,10 +23,10 @@ class ListActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
 
-            listsRecyclerView = findViewById<RecyclerView>(R.id.lists_recyclerview)
-            listsRecyclerView.layoutManager = LinearLayoutManager(this)
-            listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
         }
+        listsRecyclerView = findViewById<RecyclerView>(R.id.lists_recyclerview)
+        listsRecyclerView.layoutManager = LinearLayoutManager(this)
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
