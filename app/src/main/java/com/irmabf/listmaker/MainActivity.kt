@@ -11,33 +11,40 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.FrameLayout
 
 import kotlinx.android.synthetic.main.activity_list.*
 
-class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+class MainActivity : AppCompatActivity(), ListSelectionFragment.OnListItemFragmentInteractionListener {
+
+    private  var fragmentContainer: FrameLayout? = null
+
+    private var listSelectionFragment: ListSelectionFragment = ListSelectionFragment.newInstance()
+
+    override fun onListItemClicked(list: TaskList) {
+        showListDetail(list)
+    }
 
     companion object {
         val INTENT_LIST_KEY  = "list"
         val LIST_DETAIL_REQUEST_CODE = 123
     }
 
-    lateinit var  listsRecyclerView: RecyclerView
-
-    //This creates a new ListDataManager as soon as the activity is created
-    val listDataManager: ListDataManager = ListDataManager(this)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
         setSupportActionBar(toolbar)
 
+        fragmentContainer = findViewById(R.id.fragment_container)
+
+        supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_container, listSelectionFragment)
+                .commit()
+
         fab.setOnClickListener { view ->
             showCreateListDialog()
         }
-        val lists = listDataManager.readLists()
-        listsRecyclerView = findViewById<RecyclerView>(R.id.lists_recyclerview)
-        listsRecyclerView.layoutManager = LinearLayoutManager(this)
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -70,14 +77,9 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
         builder.setPositiveButton(positiveButtonTitle, { dialog, i ->
 
             val list = TaskList(listTitleEditText.text.toString())
-            listDataManager.saveList(list)
-
-            val recyclerAdapter = listsRecyclerView.adapter as
-                    ListSelectionRecyclerViewAdapter
-            recyclerAdapter.addList(list)
+           listSelectionFragment.addList(list)
 
             dialog.dismiss()
-
             showListDetail(list)
         })
         builder.create().show()
@@ -91,10 +93,6 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
         startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
     }
 
-    override fun listItemClicked(list: TaskList) {
-        showListDetail(list)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data:
     Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -103,15 +101,10 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
             // 2
             data?.let {
                 // 3
-                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY))
-                updateLists()
+                listSelectionFragment.saveList(data.getParcelableExtra<TaskList>(INTENT_LIST_KEY))
             }
         }
     }
 
-    private fun updateLists() {
-        val lists = listDataManager.readLists()
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
-    }
 
 }
