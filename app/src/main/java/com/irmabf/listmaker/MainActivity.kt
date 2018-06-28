@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
 
     companion object {
         val INTENT_LIST_KEY  = "list"
+        val LIST_DETAIL_REQUEST_CODE = 123
     }
 
     lateinit var  listsRecyclerView: RecyclerView
@@ -86,10 +87,31 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
         val listDetailIntent =
                 Intent(this, ListDetailActivity::class.java)
         listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-        startActivity(listDetailIntent)
+        //startActivity(listDetailIntent)
+        startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
     }
 
     override fun listItemClicked(list: TaskList) {
         showListDetail(list)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data:
+    Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // 1
+        if (requestCode == LIST_DETAIL_REQUEST_CODE) {
+            // 2
+            data?.let {
+                // 3
+                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY))
+                updateLists()
+            }
+        }
+    }
+
+    private fun updateLists() {
+        val lists = listDataManager.readLists()
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
+    }
+
 }
