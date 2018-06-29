@@ -1,4 +1,4 @@
-package com.irmabf.listmaker
+package com.irmabf.listmaker.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -10,11 +10,17 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.InputType
 import android.widget.EditText
+import com.irmabf.listmaker.adapter.ListItemsRecyclerViewAdapter
+import com.irmabf.listmaker.R
+import com.irmabf.listmaker.model.TaskList
+import kotlinx.android.synthetic.main.fragment_list_detail.*
 
 class ListDetailActivity : AppCompatActivity() {
 
     lateinit var list: TaskList
+
     lateinit var listItemsRecyclerView: RecyclerView
+
     lateinit var addTaskButton: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,15 +28,12 @@ class ListDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list_detail)
 
         list = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)
+
         title = list.name
 
-        // 1
-        listItemsRecyclerView =
-                findViewById<RecyclerView>(R.id.list_items_reyclerview)
-// 2
+        listItemsRecyclerView = findViewById<RecyclerView>(R.id.list_items_reyclerview)
         listItemsRecyclerView.adapter = ListItemsRecyclerViewAdapter(list)
-// 3
-        listItemsRecyclerView.layoutManager = LinearLayoutManager(this)
+        list_items_reyclerview.layoutManager = LinearLayoutManager(this)
 
         addTaskButton = findViewById<FloatingActionButton>(R.id.add_task_button)
         addTaskButton.setOnClickListener {
@@ -39,22 +42,17 @@ class ListDetailActivity : AppCompatActivity() {
     }
 
     private fun showCreateTaskDialog() {
-        //1. Set up a view called taskEditText that we will use later
         val taskEditText = EditText(this)
         taskEditText.inputType = InputType.TYPE_CLASS_TEXT
 
-        //2. Set up de AlertDialog with the view taskEditText that we´ve created
         AlertDialog.Builder(this)
                 .setTitle(R.string.task_to_add)
                 .setView(taskEditText)
                 .setPositiveButton(R.string.add_task, { dialog, _ ->
-                    //3.
                     val task = taskEditText.text.toString()
                     list.tasks.add(task)
-                    //4.
                     val recyclerAdapter = listItemsRecyclerView.adapter as ListItemsRecyclerViewAdapter
                     recyclerAdapter.notifyItemInserted(list.tasks.size)
-                    //5
                     dialog.dismiss()
                 })
                 .create()

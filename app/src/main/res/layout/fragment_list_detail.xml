@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.ListSelectionFragment">
+    tools:context=".fragment.ListDetailFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/lists_recyclerview"
+        android:id="@+id/list_items_reyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

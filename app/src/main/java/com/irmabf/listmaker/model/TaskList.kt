@@ -1,4 +1,4 @@
-package com.irmabf.listmaker
+package com.irmabf.listmaker.model
 
 import android.os.Parcel
 import android.os.Parcelable
